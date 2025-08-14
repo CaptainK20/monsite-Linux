@@ -1,0 +1,289 @@
+<?php
+
+namespace Drupal\glossify_node\Plugin\Filter;
+
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Path\CurrentPathStack;
+use Drupal\Core\Render\Renderer;
+use Drupal\filter\FilterProcessResult;
+use Drupal\glossify\GlossifyBase;
+use Drupal\node\Entity\NodeType;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Filter to find and process found taxonomy terms in the fields value.
+ *
+ * @Filter(
+ *   id = "glossify_node",
+ *   title = @Translation("Glossify: Tooltips with nodes"),
+ *   type = Drupal\filter\Plugin\FilterInterface::TYPE_TRANSFORM_IRREVERSIBLE,
+ *   settings = {
+ *     "glossify_node_case_sensitivity" = TRUE,
+ *     "glossify_node_first_only" = FALSE,
+ *     "glossify_node_ignore_tags" = "",
+ *     "glossify_node_type" = "tooltips",
+ *     "glossify_node_tooltip_truncate" = FALSE,
+ *     "glossify_node_bundles" = NULL,
+ *     "glossify_node_urlpattern" = "/node/[id]",
+ *   },
+ *   weight = -10
+ * )
+ */
+final class NodeTooltip extends GlossifyBase {
+
+  /**
+   * The database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
+   * Class constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory.
+   * @param \Drupal\Core\Render\Renderer $renderer
+   *   The renderer service.
+   * @param \Drupal\Core\Path\CurrentPathStack $currentPath
+   *   The current path service.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    LoggerChannelFactoryInterface $logger_factory,
+    Renderer $renderer,
+    CurrentPathStack $currentPath,
+    Connection $database,
+  ) {
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $logger_factory,
+      $renderer,
+      $currentPath
+    );
+
+    $this->database = $database;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(
+    ContainerInterface $container,
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+  ) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('logger.factory'),
+      $container->get('renderer'),
+      $container->get('path.current'),
+      $container->get('database')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $ntype_options = [];
+
+    // Get all node types.
+    $node_types = NodeType::loadMultiple();
+    foreach ($node_types as $id => $node_type) {
+      $ntype_options[$id] = $node_type->get('name');
+    }
+
+    $form['glossify_node_case_sensitivity'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Case sensitive'),
+      '#description' => $this->t('Whether or not the match is case sensitive.'),
+      '#default_value' => $this->settings['glossify_node_case_sensitivity'],
+    ];
+    $form['glossify_node_first_only'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('First match only'),
+      '#description' => $this->t('Match and link only the first occurrence per field.'),
+      '#default_value' => $this->settings['glossify_node_first_only'],
+    ];
+    $form['glossify_node_ignore_tags'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Ignore tags'),
+      '#description' => $this->t('A comma-separated list of tags to ignore (e.g.: <code>h1,h2,div,strong</code>).'),
+      '#default_value' => $this->settings['glossify_node_ignore_tags'] ?? "",
+    ];
+    $form['glossify_node_type'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Type'),
+      '#required' => TRUE,
+      '#options' => [
+        'tooltips' => $this->t('Tooltips'),
+        'links' => $this->t('Links'),
+        'tooltips_links' => $this->t('Tooltips and links'),
+      ],
+      '#description' => $this->t('How to show matches in content. Description as HTML5 tooltip (abbr element), link to description or both.'),
+      '#default_value' => $this->settings['glossify_node_type'],
+    ];
+    $form['glossify_node_tooltip_truncate'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Truncate tooltip'),
+      '#description' => $this->t('Whether to truncate tooltip after 300 characters.'),
+      '#default_value' => $this->settings['glossify_node_tooltip_truncate'],
+      '#states' => [
+        'visible' => [
+          ':input[name="filters[glossify_node][settings][glossify_node_type]"]' => [
+            ['value' => 'tooltips'],
+            'or',
+            ['value' => 'tooltips_links'],
+          ],
+        ],
+      ],
+    ];
+    $form['glossify_node_bundles'] = [
+      '#type' => 'checkboxes',
+      '#multiple' => TRUE,
+      '#element_validate' => [
+        [
+          get_class($this),
+          'validateNodeBundles',
+        ],
+      ],
+      '#title' => $this->t('Node types'),
+      '#description' => $this->t('Select the source node types you want to use titles from to link to their node page.'),
+      '#options' => $ntype_options,
+      '#default_value' => explode(';', $this->settings['glossify_node_bundles'] ?? ''),
+    ];
+    $form['glossify_node_urlpattern'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('URL pattern'),
+      '#description' => $this->t('Url pattern, used for linking matched words. Accepts "[id]" as token. Example: "/node/[id]"'),
+      '#default_value' => $this->settings['glossify_node_urlpattern'],
+    ];
+    return $form;
+  }
+
+  /**
+   * Validation callback for glossify_node_bundles.
+   *
+   * Make the field required if the filter is enabled.
+   *
+   * @param array $element
+   *   The element being processed.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
+   */
+  public static function validateNodeBundles(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    $values = $form_state->getValues();
+    // Make node_bundles required if the filter is enabled.
+    if (!empty($values['filters']['glossify_node']['status'])) {
+      $field_values = array_filter($values['filters']['glossify_node']['settings']['glossify_node_bundles']);
+      if (empty($field_values)) {
+        $element['#required'] = TRUE;
+        $form_state->setError($element, t('%field is required.', ['%field' => $element['#title']]));
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function process($text, $langcode) {
+    $cacheTags = [];
+
+    // Get node types.
+    $node_types = explode(';', $this->settings['glossify_node_bundles']);
+
+    if (count($node_types)) {
+      $terms = [];
+
+      // Get node data.
+      $query = $this->database->select('node_field_data', 'nfd');
+      $query->addField('nfd', 'nid', 'id');
+      $query->addField('nfd', 'title', 'name');
+      $query->addField('nfd', 'title', 'name_norm');
+      $query->addField('nb', 'body_value', 'tip');
+      $query->leftJoin('node__body', 'nb', 'nb.entity_id = nfd.nid');
+      $query->condition('nfd.type', $node_types, 'IN');
+      $query->condition('nfd.status', 1);
+      $query->condition('nfd.langcode', $langcode);
+      $query->condition('nb.langcode', $langcode);
+      $query->orderBy('name_norm', 'DESC');
+      // Let other modules alter the current query.
+      $query->addTag('glossify_node_tooltip');
+      $results = $query->execute()->fetchAllAssoc('name_norm');
+
+      // Build terms array.
+      foreach ($results as $result) {
+        // Make name_norm lowercase, it seems not possible in PDO query?
+        if (!$this->settings['glossify_node_case_sensitivity']) {
+          $result->name_norm = mb_strtolower($result->name_norm);
+        }
+        $terms[$result->name_norm] = $result;
+        $cacheTags[] = 'node:' . $result->id;
+      }
+
+      // Process text.
+      if (count($terms) > 0) {
+        $text = $this->parseTooltipMatch(
+          $text,
+          $terms,
+          $this->settings['glossify_node_case_sensitivity'],
+          $this->settings['glossify_node_first_only'],
+          $this->settings['glossify_node_type'],
+          $this->settings['glossify_node_tooltip_truncate'],
+          $this->settings['glossify_node_urlpattern'],
+          $this->settings['glossify_node_ignore_tags'],
+          $langcode
+        );
+      }
+    }
+
+    // Prepare result.
+    $result = new FilterProcessResult($text);
+
+    // Add cache tag dependency.
+    $result->setCacheTags($cacheTags);
+    return $result;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    if (isset($configuration['status'])) {
+      $this->status = (bool) $configuration['status'];
+    }
+    if (isset($configuration['weight'])) {
+      $this->weight = (int) $configuration['weight'];
+    }
+    if (isset($configuration['settings'])) {
+      // Workaround for not accepting arrays in config schema.
+      if (is_array($configuration['settings']['glossify_node_bundles'])) {
+        $glossify_node_bundles = array_filter($configuration['settings']['glossify_node_bundles']);
+        $configuration['settings']['glossify_node_bundles'] = implode(';', $glossify_node_bundles);
+      }
+      $this->settings = (array) $configuration['settings'];
+    }
+    return $this;
+  }
+
+}

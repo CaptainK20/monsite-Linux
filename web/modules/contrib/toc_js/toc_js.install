@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Contains toc_js.install.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function toc_js_requirements($phase) {
+  $requirements = [];
+  if ($phase != 'runtime') {
+    return $requirements;
+  }
+  return $requirements;
+}
+
+/**
+ * Force cache rebuild to register new library alter hook.
+ */
+function toc_js_update_8001() {
+}

@@ -1,0 +1,26 @@
+# Schema for the configuration files of the Glossify node tooltip module.
+filter_settings.glossify_node:
+  type: mapping
+  label: 'Taxonomy tooltip filter'
+  mapping:
+    glossify_node_case_sensitivity:
+      type: boolean
+      label: 'Case sensitive'
+    glossify_node_first_only:
+      type: boolean
+      label: 'First match only'
+    glossify_node_ignore_tags:
+      type: string
+      label: 'Tags to ignore'
+    glossify_node_type:
+      type: string
+      label: 'Type'
+    glossify_node_tooltip_truncate:
+      type: boolean
+      label: 'Truncate tooltip'
+    glossify_node_bundles:
+      type: string
+      label: 'Node types'
+    glossify_node_urlpattern:
+      type: string
+      label: 'URL pattern'

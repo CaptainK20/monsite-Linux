@@ -1,0 +1,6 @@
+services:
+  splidebox:
+    class: Drupal\splidebox\Splidebox
+    parent: splide.manager
+    calls:
+      - [setAdmin, ['@splide.admin']]

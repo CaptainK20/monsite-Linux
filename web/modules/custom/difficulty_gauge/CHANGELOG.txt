@@ -1,0 +1,10 @@
+Difficulty Gauge - Change Log
+=============================
+
+1.0.0 (2025-07-10)
+------------------
+- Initial stable release.
+- Provides a configurable field formatter for taxonomy fields.
+- Supports visual difficulty gauge using dots or bars.
+- Uses term weight to determine level automatically.
+- Works with Views and field display modes.

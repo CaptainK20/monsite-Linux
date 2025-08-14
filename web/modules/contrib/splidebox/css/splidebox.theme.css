@@ -1,0 +1,171 @@
+/**
+ * @file
+ */
+
+.splidebox__overlay {
+  background-color: #000;
+}
+
+.is-sbox-mounting .splidebox__overlay,
+.is-sbox-umounting .splidebox__overlay {
+  background-color: transparent;
+}
+
+.splidebox.is-sbox-mounted .splidebox__closer,
+.splidebox.is-sbox-mounted .splidebox__fullscreen {
+  color: #fff;
+  border: 0;
+  background: none;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.splidebox.is-sbox-mounted .splidebox__fullscreen svg {
+  fill: #fff;
+}
+
+.splidebox .splidebox__counter,
+.splidebox.is-sbox-mounted .is-caption {
+  color: #fff;
+  font-size: 16px;
+  font-size: 1rem;
+}
+
+.splidebox.is-sbox-mounted .is-caption {
+  transition: opacity 1.5s ease;
+  text-align: center;
+  opacity: 1;
+}
+
+.splidebox.is-sbox-mounted .slide__caption,
+.splidebox.is-sbox-mounted .splidebox__caption.is-captioned {
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.splidebox.is-sbox-mounted.is-sbox-zoomed .is-caption {
+  opacity: 0;
+}
+
+.splidebox.is-sbox-paginated .splidebox__caption {
+  bottom: 30px;
+}
+
+.splidebox.is-sbox-mounted .splide--caption--bottom .slide__caption,
+.splidebox.is-sbox-mounted .splide--caption--top .slide__caption {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/** Olivero too large H2 for small areas. */
+.splidebox__caption h2 {
+  margin-bottom: 0;
+  color: #eaeaea;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.splidebox.is-sbox-mounted .splide .splide__slide {
+  outline: 0;
+}
+
+/** @todo remove post Splide release. */
+.splidebox.is-sbox-mounted .splide .splide__arrows {
+  z-index: 98;
+}
+
+.splidebox.is-sbox-mounted .splide video {
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+}
+
+.splidebox.is-sbox-mounted .splide .splide__slide .splidebox__img {
+  width: auto;
+  margin: auto;
+}
+
+/** Dots are hidden from viewport, override. */
+.splidebox.is-sbox-mounted .splide .splide__pagination {
+  bottom: 8px;
+}
+
+.splidebox.is-sbox-mounted .splide--skin--seagreen .splide__pagination {
+  bottom: 48px;
+}
+
+/** Skins. */
+.splidebox.splidebox--skin--skyblue .splidebox__counter,
+.splidebox.splidebox--skin--skyblue .splidebox__nav button {
+  color: #20b2aa;
+}
+
+.splidebox.splidebox--skin--skyblue .splidebox__nav svg {
+  fill: #20b2aa;
+}
+
+.splidebox.splidebox--skin--skyblue .splidebox__nav button:hover {
+  color: #57e1d9;
+}
+
+.splidebox.splidebox--skin--skyblue .splidebox__nav button:hover svg {
+  fill: #57e1d9;
+}
+
+.is-splidebox .blazy__splidebox {
+  cursor: crosshair;
+}
+
+/** Multiple visible items. */
+.splidebox .is-carousel .splidebox__item {
+  transition: opacity 1s ease;
+  opacity: 0.6;
+}
+
+.splidebox .is-carousel .slide.is-visible .splidebox__item {
+  opacity: 1;
+}
+
+/** AJAX loaded contents. */
+.splidebox .is-ajax-slide .slide__content {
+  width: 98%;
+  max-width: 98%;
+  background-color: #fff;
+}
+
+.splidebox__ajax {
+  min-height: 210px;
+  margin: 15px auto;
+  text-align: left;
+}
+
+/** Hides disturbing captions for [remote]video, audio until being hovered/clicked. */
+.is-sbox-mounted.is-sbox-playable .splidebox__caption h2,
+.is-sbox-mounted.is-sbox-playable .splidebox__caption p {
+  pointer-events: none;
+}
+
+.is-sbox-mounted.is-sbox-playable .splidebox__caption {
+  pointer-events: auto;
+  opacity: 0;
+}
+
+.is-sbox-mounted.is-sbox-playable .splidebox__caption:hover,
+.is-sbox-mounted.is-sbox-playable .is-caption.is-sbox-visible {
+  opacity: 1;
+}
+
+@media (min-width: 64em) {
+  /* Due to desktop scrollbar. */
+  .splidebox.is-sbox-mounted .splide .splide__arrow--next {
+    right: 2em;
+  }
+
+  .splidebox .is-ajax-slide .slide__content {
+    width: 86%;
+    max-width: 86%;
+  }
+}

@@ -1,0 +1,12 @@
+<?php
+
+use Drupal\trash\TrashStorageTrait;
+
+/**
+ * Provides a custom storage class for trash-enabled entity types.
+ */
+class Drupal__Core__Entity__Sql__SqlContentEntityStorageTrash689d6b8594816 extends \Drupal\Core\Entity\Sql\SqlContentEntityStorage {
+
+  use TrashStorageTrait;
+
+}

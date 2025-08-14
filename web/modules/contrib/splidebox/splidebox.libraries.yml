@@ -1,0 +1,36 @@
+base:
+  css:
+    base:
+      css/splidebox.css: {}
+  dependencies:
+    - blazy/dblazy
+
+splidebox:
+  js:
+    js/splidebox.min.js: { minified: true }
+    js/components/splidebox.ui.min.js: { minified: true }
+  dependencies:
+    - splidebox/base
+    - splide/fullscreen
+    - splide/media
+    - splide/wheel
+
+load:
+  js:
+    js/splidebox.load.min.js: { minified: true }
+  css:
+    theme:
+      css/splidebox.theme.css: {}
+  dependencies:
+    - blazy/loading
+    - blazy/media
+    - splide/load
+    - splide/nav
+    - splidebox/splidebox
+
+ajax:
+  js:
+    js/components/splidebox.ajax.min.js: { minified: true }
+  dependencies:
+    - blazy/bio.ajax
+    - splidebox/load

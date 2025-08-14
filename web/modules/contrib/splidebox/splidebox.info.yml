@@ -1,0 +1,15 @@
+name: Splidebox
+type: module
+description: Provides Splidebox integration.
+core_version_requirement: ^9.3 || ^10 || ^11
+package: Splide
+dependencies:
+  - splide:splide (>= 2.x)
+
+# Add a fake version so local drush and Git checkouts do not fail dependencies.
+# version: 2.x
+
+# Information added by Drupal.org packaging script on 2023-10-01
+version: '2.0.0'
+project: 'splidebox'
+datestamp: 1696142255

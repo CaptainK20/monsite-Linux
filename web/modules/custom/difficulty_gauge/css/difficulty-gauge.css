@@ -1,0 +1,35 @@
+/**
+ * Difficulty Gauge - Visual display for taxonomy-based difficulty levels.
+ * Styles for dot (round) and bar symbols, both inactive and active.
+ * To customize colors or sizes, adjust the values below.
+ */
+
+.difficulty-gauge {
+  display: inline-flex;
+  gap: 4px;              
+  align-items: center;
+}
+
+.difficulty-gauge .round {
+  width: 17px;            
+  height: 17px;
+  border-radius: 50%;
+  background-color: #efefef; 
+  transition: background-color 0.3s ease-in-out;
+}
+
+.difficulty-gauge .round.active {
+  background-color: #ff5722; 
+}
+
+.difficulty-gauge .bar {
+  width: 30px;           
+  height: 13px;
+  background-color: #efefef;
+  border-radius: 8px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.difficulty-gauge .bar.active {
+  background-color: #ff5722; 
+}

@@ -1,0 +1,125 @@
+<?php
+
+/**
+ * @file
+ * Splide within a lightbox.
+ */
+
+use Drupal\splidebox\Splidebox;
+
+/**
+ * Provides a convenient shortcut for procedural hooks.
+ *
+ * @return \Drupal\splidebox\Splidebox
+ *   The Splidebox manager class instance.
+ */
+// @codingStandardsIgnoreStart
+function splidebox(): Splidebox {
+  static $manager;
+
+  if (!isset($manager)) {
+    $manager = \Drupal::service('splidebox');
+  }
+
+  return $manager;
+}
+// @codingStandardsIgnoreEnd
+
+/**
+ * Implements hook_blazy_attach_alter().
+ */
+function splidebox_blazy_attach_alter(array &$load, array $attach = []) {
+  if (splidebox()->isApplicable($attach)) {
+    splidebox()->attachAlter($load, $attach);
+  }
+}
+
+/**
+ * Implements hook_blazy_lightboxes_alter().
+ */
+function splidebox_blazy_lightboxes_alter(array &$lightboxes) {
+  $lightboxes[] = 'splidebox';
+}
+
+/**
+ * Overrides variables for theme_blazy().
+ */
+function splidebox_preprocess_blazy(&$variables) {
+  if (splidebox()->isApplicable($variables['settings'])) {
+    splidebox()->preprocessBlazy($variables);
+  }
+}
+
+/**
+ * Implements hook_blazy_form_element_alter().
+ */
+function splidebox_blazy_form_element_alter(array &$form, array $definition) {
+  splidebox()->formElementAlter($form, $definition);
+}
+
+/**
+ * Implements hook_blazy_settings_alter().
+ */
+function splidebox_blazy_settings_alter(array &$build, $items) {
+  // @todo remove check post blazy:2.17, only needed for mismatched versions.
+  $key = 'settings';
+  if (!isset($build["#$key"]) && isset($build[$key])) {
+    $build["#$key"] = $build[$key];
+  }
+
+  $settings = &$build['#settings'];
+  $blazies  = $settings['blazies'];
+
+  if (splidebox()->isApplicable($settings)) {
+    // If embedded inside a views gallery, always useless delta 0.
+    // This check ensures we are dealing with node formatters without views.
+    if (!$blazies->get('view.embedded')) {
+      splidebox()->toAttributes($settings);
+    }
+  }
+}
+
+/**
+ * Implements hook_blazy_is_blazy_alter().
+ */
+function splidebox_blazy_is_blazy_alter(array &$settings, array $data) {
+  if (splidebox()->isApplicable($settings)) {
+    $blazies = $settings['blazies'];
+
+    // Add data-splidebox attributes if called from a view style plugin.
+    // This checks ensures we are in a views gallery, not a node formatter.
+    if ($blazies->is('view') || $blazies->get('view.embedded')) {
+      splidebox()->toAttributes($settings);
+    }
+  }
+}
+
+/**
+ * Implements hook_blazy_base_settings_alter().
+ */
+function splidebox_blazy_base_settings_alter(array &$settings, $context = []) {
+  $classes = array_values(Splidebox::supportedModules());
+  if (in_array($context['class'], $classes)) {
+    $settings += ['ajax_link' => ''];
+  }
+}
+
+/**
+ * Implements hook_config_schema_info_alter().
+ */
+function splidebox_config_schema_info_alter(array &$definitions) {
+  if (isset($definitions['blazy_base'])) {
+    $definitions['blazy_base']['mapping']['ajax_link']['type'] = 'string';
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function splidebox_help($route_name) {
+  if ($route_name == 'help.page.splidebox') {
+    $output = file_get_contents(dirname(__FILE__) . '/README.md');
+    return blazy()->markdown($output);
+  }
+  return '';
+}

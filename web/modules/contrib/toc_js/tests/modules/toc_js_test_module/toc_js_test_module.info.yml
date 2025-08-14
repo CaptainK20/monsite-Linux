@@ -1,0 +1,10 @@
+name: TOC JS Test Module
+type: module
+description: Support module for testing the TOC JS module
+package: Testing
+core_version_requirement: ^10 || ^11
+
+# Information added by Drupal.org packaging script on 2025-06-25
+version: '3.2.1'
+project: 'toc_js'
+datestamp: 1750841333

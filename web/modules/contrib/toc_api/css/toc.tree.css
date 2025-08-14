@@ -1,0 +1,13 @@
+/**
+ * @file
+ * TOC tree styling
+ */
+
+/**
+ * Add border to tree when displayed within a node
+ */
+.node .toc-tree {
+  margin: 1em 0;
+  padding: 0 1em;
+  border: 1px solid #ccc;
+}

@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Glossify module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function glossify_theme() {
+  return [
+    'glossify_tooltip' => [
+      'variables' => [
+        'word' => NULL,
+        'tip' => NULL,
+        'tip_raw' => NULL,
+        'langcode' => NULL,
+      ],
+    ],
+    'glossify_link' => [
+      'variables' => [
+        'word' => NULL,
+        'tip' => NULL,
+        'tip_raw' => NULL,
+        'tipurl' => NULL,
+      ],
+    ],
+  ];
+}

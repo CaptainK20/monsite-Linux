@@ -1,0 +1,7 @@
+name: 'Difficulty Gauge'
+type: module
+description: 'Provides a field formatter to display a visual difficulty gauge using colored dots or bars.'
+core_version_requirement: ^10 || ^11
+package: Custom
+dependencies:
+  - taxonomy

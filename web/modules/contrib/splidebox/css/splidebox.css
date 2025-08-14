@@ -1,0 +1,323 @@
+/**
+ * @file
+ * Provides the fundamental layout rules.
+ */
+
+.splidebox,
+.splidebox * {
+  box-sizing: border-box;
+}
+
+.splidebox,
+.splidebox__overlay,
+.splidebox__inner,
+.splidebox__content {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.splidebox {
+  overflow: hidden;
+  transition: 1ms opacity ease;
+  transform: translateZ(0);
+  opacity: 0;
+}
+
+.splidebox.is-sbox-mounted {
+  position: fixed;
+  z-index: 99999;
+  opacity: 1;
+}
+
+.splidebox.is-sbox-mounted,
+.is-sbox-mounted .splidebox__overlay,
+.is-sbox-mounted .splidebox__inner,
+.is-sbox-mounted .splidebox__content {
+  overflow: hidden;
+  width: 100%;
+  width: 100vw;
+  height: 100%;
+  height: 100vh;
+}
+
+.splidebox__inner {
+  z-index: 9999;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  transition: 100ms opacity ease;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+}
+
+.splidebox.is-sbox-mounted .splidebox__inner {
+  opacity: 1;
+}
+
+.is-sbox-unsplide .is-zoomable {
+  cursor: default;
+}
+
+.is-sbox-zoomed .is-zoomable {
+  cursor: grab;
+}
+
+.is-sbox-dragging .is-zoomable {
+  cursor: grabbing;
+}
+
+.is-sbox-dragging article,
+.is-sbox-dragging p {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.splidebox.is-sbox-mounted .splidebox__nav {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 42px;
+}
+
+.splidebox.is-sbox-mounted .splidebox__nav button,
+.splidebox.is-sbox-mounted .splidebox__counter {
+  position: absolute;
+  top: -1px;
+  padding: 5px 7px 7px;
+}
+
+.splidebox.is-sbox-mounted .splidebox__nav button {
+  right: 10px;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  outline: none;
+}
+
+.splidebox.is-sbox-mounted .splidebox__counter {
+  left: 10px;
+}
+
+.splidebox.is-sbox-mounted .splidebox__nav .splidebox__fullscreen {
+  right: 54px;
+}
+
+.splidebox.is-sbox-mounted .splidebox__caption {
+  position: absolute;
+  z-index: 9999;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 100%;
+  transition: 1s width ease;
+  transform: translateX(-50%);
+}
+
+.splidebox.is-sbox-mounted .splide {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: auto;
+  transform: translate(-50%, -50%);
+}
+
+.splidebox.is-sbox-mounted .splide .slide {
+  overflow: hidden;
+  text-align: center;
+}
+
+.splidebox.is-sbox-mounted .splide .is-flex {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  height: 100vh;
+  min-height: auto;
+}
+
+.splidebox.is-sbox-mounted .slide .splidebox__item {
+  overflow: visible;
+  transition: 0.6s transform ease;
+  transform: translateZ(0);
+  will-change: auto;
+}
+
+.splidebox.is-sbox-mounted .splide .is-centered {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  margin: 0 auto;
+}
+
+/* To make zoom work, otherwise cropped. */
+.splidebox.is-sbox-mounted .slide .slide__media {
+  overflow: visible;
+}
+
+.splidebox.is-sbox-fullscreen .splidebox__fullscreen {
+  visibility: hidden;
+  text-indent: -999px;
+}
+
+.splidebox.is-sbox-mounted .is-caption {
+  pointer-events: none;
+}
+
+.splidebox.is-sbox-mounted .is-caption a {
+  pointer-events: auto;
+}
+
+.splidebox .slide .media-wrapper {
+  max-width: 100%;
+  margin: auto;
+}
+
+.splidebox .splidebox__overlay {
+  transition: opacity 0.6s ease;
+  opacity: 1;
+}
+
+.splidebox.is-sbox-mounting .splidebox__overlay,
+.splidebox.is-sbox-umounting .splidebox__overlay,
+.splidebox .splidebox__clone {
+  transform: translateZ(0);
+  opacity: 0.6;
+}
+
+.splidebox.is-sbox-mounting .splidebox__clone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  transition: transform 0.4s ease;
+  transform: translateZ(0);
+  opacity: 1;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  backface-visibility: hidden;
+}
+
+.splidebox.is-sbox-mounted .slide .splidebox__item .splidebox__img {
+  width: auto;
+  /* display: block; */
+  height: auto;
+  margin: 0 auto;
+}
+
+/* Required to close smoothly. */
+.splidebox.is-sbox-unsplide .splidebox__img,
+.splidebox.is-sbox-mounted .slide.is-active .splidebox__img,
+.splidebox.is-sbox-mounted .slide.is-active video {
+  transition: opacity 0.3s, transform 0.3s ease;
+}
+
+.splidebox .slide .splidebox__item .splidebox__img.is-zoomable {
+  position: absolute;
+  display: block;
+  max-width: none;
+  max-height: none;
+}
+
+/* Mounting. */
+.splidebox.is-sbox-mounting .slide.is-active .splidebox__img,
+.splidebox.is-sbox-mounting .slide.is-active video {
+  opacity: 0;
+}
+
+/* Visible. */
+.splidebox.is-sbox-mounted:not(.is-sbox-mounting) .slide.is-active .splidebox__img,
+.splidebox.is-sbox-mounted:not(.is-sbox-mounting) .slide.is-active video {
+  opacity: 1;
+}
+
+/* Mounting and closing. */
+.splidebox.is-sbox-mounted.is-sbox-mounting .splidebox__inner,
+.splidebox.is-sbox-mounted.is-sbox-umounting .splidebox__overlay {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Closing. */
+.splidebox.is-sbox-mounted.is-sbox-umounting .splidebox__caption,
+.splidebox.is-sbox-mounted.is-sbox-umounting .splidebox__nav,
+.splidebox.is-sbox-mounted.is-sbox-umounting .splidebox__ajax,
+.splidebox.is-sbox-mounted.is-sbox-umounting .splide__arrows,
+.splidebox.is-sbox-mounted.is-sbox-umounting .splide__pagination,
+.splidebox.is-sbox-mounted.is-sbox-umounting .media .media__icon,
+.splidebox.is-sbox-mounted.is-sbox-umounting iframe,
+.splidebox.is-sbox-mounted:not(.is-sbox-mounting) .splidebox__clone {
+  display: none;
+}
+
+.splidebox.is-sbox-mounted.is-sbox-umounting .is-ajax-slide .slide__content {
+  background-color: transparent;
+}
+
+.splidebox.is-sbox-mounted.is-sbox-umounting .slide.is-active .splidebox__trans {
+  z-index: 3;
+  display: block;
+  visibility: visible;
+  transition: opacity 0.3s, transform 0.4s ease;
+  opacity: 0.8;
+}
+
+.is-sbox-unsplide.is-sbox-zoomed .slide .slide__content,
+.splidebox.is-sbox-zoomed .slide.is-active .slide__content {
+  width: 100%;
+  height: 100%;
+  height: 100vh;
+}
+
+.splidebox.is-sbox-zoomed .slide .slide__content,
+.splidebox.is-sbox-umounting .slide.is-active .slide__content,
+.splidebox.is-sbox-mounted.is-sbox-umounting .splide .is-ajax-slide .splidebox__item {
+  overflow: hidden;
+}
+
+.is-sbox-unsplide.is-sbox-zoomed .slide .slide__content,
+.splidebox.is-sbox-zoomed .slide.is-active .slide__content {
+  overflow-y: scroll;
+}
+
+.splidebox.is-sbox-zoomed .slide.is-zoomable-slide .slide__content {
+  transition: transform 0.3s ease;
+}
+
+.splidebox.is-sbox-mounted .slide.is-ajax-slide .slide__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  height: 100vh;
+  transform: translate(-50%, -50%);
+}
+
+.splidebox.is-sbox-mounted .splide .is-ajax-slide .splidebox__item {
+  display: block;
+  overflow-y: scroll;
+  height: 100vh;
+  margin: auto;
+  padding: 15px;
+}
+
+.is-sbox-unsplide.is-sbox-zoomed .splidebox__item .splidebox__img.is-zoomable,
+.splidebox.is-sbox-zoomed .slide.is-active .splidebox__item .splidebox__img.is-zoomable {
+  max-width: none;
+  max-height: none;
+}
+
+.is-sbox-unsplide.is-sbox-mounted .splide,
+.is-sbox-unsplide .splide__slider,
+.is-sbox-unsplide .splide__track,
+.is-sbox-unsplide .splide__list,
+.is-sbox-unsplide .splide__slide {
+  height: inherit;
+}

@@ -1,0 +1,27 @@
+{
+  "name": "drupal/splidebox",
+  "description": "Splidebox, Splide within lightbox.",
+  "keywords": ["carousel", "slideshow", "lightbox", "Drupal"],
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://drupal.org/project/splidebox",
+  "authors": [
+      {
+          "name": "Gaus Surahman",
+          "homepage": "https://www.drupal.org/user/159062",
+          "role": "Maintainer"
+      },
+      {
+          "name": "Contributors",
+          "homepage": "https://www.drupal.org/node/3216403/committers",
+          "role": "Contributor"
+      }
+  ],
+  "support": {
+    "issues": "https://drupal.org/project/issues/splidebox",
+    "source": "https://git.drupalcode.org/splidebox"
+  },
+  "require": {
+    "drupal/splide": "^2.0"
+  }
+}

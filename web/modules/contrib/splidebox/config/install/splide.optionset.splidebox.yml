@@ -1,0 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - splidebox
+id: splidebox
+name: splidebox
+label: Splidebox
+weight: 0
+group: lightbox
+skin: skyblue
+breakpoint: 2
+optimized: true
+options:
+  settings:
+    type: loop
+    waitForTransition: false
+    width: 100vw
+    height: 100vh
+    perMove: 1
+    focus: center
+    lazyLoad: blazy
+  breakpoints:
+    -
+      breakpoint: 1
+      unsplide: false
+      settings:
+        width: 100vw
+        height: 100vh
+        perMove: 1
+        focus: center
+    -
+      breakpoint: 767
+      unsplide: false
+      settings:
+        width: 100vw
+        height: 100vh
+        perMove: 1
+        focus: center
